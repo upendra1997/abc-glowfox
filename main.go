@@ -22,7 +22,7 @@ func setupRouter() *gin.Engine {
 	}
 	{
 		routes.POST("/booking/:user_id", api.BookClass)
-		routes.GET("/booking/:user_id", api.Bookings)
+		routes.GET("/booking", api.Bookings)
 	}
 	return r
 }

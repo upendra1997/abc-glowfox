@@ -13,28 +13,32 @@ import (
 
 func CreateClasses(c *gin.Context) {
 	var class classRequest
-	bodyReader, err := c.Request.GetBody()
-	if err != nil {
-		util.HandelError(c, "Request body is not found", err)
-		return
-	}
+	bodyReader := c.Request.Body
 	body, err := io.ReadAll(bodyReader)
 	if err != nil {
-		util.HandelError(c, "Unable to read the request body", err)
+		util.HandleError(c, "Unable to read the request body", err)
 		return
 	}
 	err = json.Unmarshal(body, &class)
 	if err != nil {
-		util.HandelError(c, "Unable to parse the request body", err)
+		util.HandleError(c, "Unable to parse the request body", err)
 		return
 	}
 
 	if class.Capacity <= 0 {
-		util.HandelError(c, "Capacity cannot be less than zero", err)
+		util.HandleError(c, "Capacity cannot be less than zero", err)
 		return
 	}
 
+	class.EndDate = util.Date{Time: class.EndDate.Add(time.Hour * 24)}
 	slog.Info("Parsed body is", "class", class)
+
+	duration := class.EndDate.Time.Sub(class.StartDate.Time).Hours() / 24
+
+	if duration < 0 {
+		util.HandleError(c, "please specify valid start and end date", err)
+		return
+	}
 
 	var classes []db.ClassInventory
 	currentDay := class.StartDate.Time
@@ -48,7 +52,7 @@ func CreateClasses(c *gin.Context) {
 	}
 	err = db.DB.AddClassInventory(classes)
 	if err != nil {
-		util.HandelError(c, "Unable to add the classes", err)
+		util.HandleError(c, "Unable to add the classes", err)
 	}
 	c.Status(http.StatusOK)
 }

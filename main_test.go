@@ -57,6 +57,11 @@ func TestMultipleCreateClasses(t *testing.T) {
         "capacity": 40
     },
     {
+        "name": "pilates",
+        "date": "2024-05-24",
+        "capacity": 40
+    },
+    {
         "name": "yoga",
         "date": "2024-05-22",
         "capacity": 50
@@ -64,6 +69,11 @@ func TestMultipleCreateClasses(t *testing.T) {
     {
         "name": "yoga",
         "date": "2024-05-23",
+        "capacity": 50
+    },
+    {
+        "name": "yoga",
+        "date": "2024-05-24",
         "capacity": 50
     }
 ]`, w.Body.String())
@@ -93,6 +103,11 @@ func TestBookClasses(t *testing.T) {
         "capacity": 40
     },
     {
+        "name": "pilates",
+        "date": "2024-05-24",
+        "capacity": 40
+    },
+    {
         "name": "yoga",
         "date": "2024-05-22",
         "capacity": 50
@@ -101,6 +116,11 @@ func TestBookClasses(t *testing.T) {
         "name": "yoga",
         "date": "2024-05-23",
         "capacity": 50
+    },
+    {
+        "name": "yoga",
+        "date": "2024-05-24",
+        "capacity": 50
     }
 ]`, w.Body.String())
 }
@@ -108,7 +128,7 @@ func TestBookClasses(t *testing.T) {
 func TestGetBookings(t *testing.T) {
 	router := setupRouter()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/booking/upendra", nil)
+	req, _ := http.NewRequest("GET", "/api/booking", nil)
 	router.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, `[

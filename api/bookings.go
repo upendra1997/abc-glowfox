@@ -4,6 +4,7 @@ import (
 	"abc/db"
 	"abc/util"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log/slog"
@@ -13,24 +14,20 @@ import (
 
 func BookClass(c *gin.Context) {
 	var bookingRequest BookingRequest
-	bodyReader, err := c.Request.GetBody()
-	if err != nil {
-		util.HandelError(c, "Request body is not found", err)
-		return
-	}
+	bodyReader := c.Request.Body
 	body, err := io.ReadAll(bodyReader)
 	if err != nil {
-		util.HandelError(c, "Unable to read the request body", err)
+		util.HandleError(c, "Unable to read the request body", err)
 		return
 	}
 	err = json.Unmarshal(body, &bookingRequest)
 	if err != nil {
-		util.HandelError(c, "Unable to parse the request body", err)
+		util.HandleError(c, "Unable to parse the request body", err)
 		return
 	}
 	userId := c.Param("user_id")
 	if strings.TrimSpace(userId) == "" {
-		util.HandelError(c, "No user id specified", nil)
+		util.HandleError(c, "No user id specified", nil)
 		return
 	}
 	slog.Info("Parsed body is", "booking", bookingRequest, "user_id", userId)
@@ -40,18 +37,13 @@ func BookClass(c *gin.Context) {
 		Date:  bookingRequest.Date,
 	})
 	if err != nil {
-		util.HandelError(c, "Unable to add the booking", err)
+		util.HandleError(c, fmt.Sprintf("Unable to add the booking: %s", err), err)
 		return
 	}
 	c.Status(http.StatusOK)
 }
 
 func Bookings(c *gin.Context) {
-	userId := c.Param("user_id")
-	if strings.TrimSpace(userId) == "" {
-		util.HandelError(c, "No user id specified", nil)
-	}
-	slog.Info("Parsed body is", "user_id", userId)
 	c.IndentedJSON(http.StatusOK, db.DB.GetBookings())
 }
 
