@@ -6,6 +6,9 @@
 2. run `go get .` to get all the dependencies of the project.
 3. run `go run .` to start the server on port `8080`, you can change the port in `config/config.go`
 
+## Test
+1. Run tests using `go test`
+
 ## Sample APIs
 
 ### Classes
